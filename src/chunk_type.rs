@@ -1,8 +1,9 @@
 #![allow(unused_variables)]
-use std::str::FromStr;
+use std::{fmt::Display, str::FromStr};
 
 use anyhow::{anyhow, bail, Result};
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct ChunkType {
     bytes: [u8; 4],
 }
@@ -63,6 +64,19 @@ impl FromStr for ChunkType {
         } else {
             Err(anyhow!("Chunk is not valid"))
         }
+    }
+}
+
+impl Display for ChunkType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "[{}, {}, {}, {}]",
+            self.bytes[0] as char,
+            self.bytes[1] as char,
+            self.bytes[2] as char,
+            self.bytes[3] as char
+        )
     }
 }
 
