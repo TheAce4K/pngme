@@ -15,13 +15,22 @@ impl ChunkType {
                 return false;
             }
         }
-        if self.bytes[2].is_ascii_uppercase() {
+        if !self.is_reserved_bit_valid() {
             return false;
         }
         return true;
     }
     fn is_critical(&self) -> bool {
         self.bytes[0].is_ascii_uppercase()
+    }
+    fn is_public(&self) -> bool {
+        self.bytes[1].is_ascii_uppercase()
+    }
+    fn is_reserved_bit_valid(&self) -> bool {
+        self.bytes[2].is_ascii_uppercase()
+    }
+    fn is_safe_to_copy(&self) -> bool {
+        self.bytes[3].is_ascii_lowercase()
     }
 }
 
@@ -34,7 +43,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
         if chunk.is_valid() {
             Ok(chunk)
         } else {
-            Err(anyhow!("Cant convert to chunk type"))
+            Err(anyhow!("Cant convert to chunk type, chunk is not valid"))
         }
     }
 }
