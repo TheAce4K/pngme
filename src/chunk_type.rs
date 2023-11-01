@@ -1,5 +1,7 @@
 #![allow(unused_variables)]
-use anyhow::{anyhow, Result};
+use std::str::FromStr;
+
+use anyhow::{anyhow, bail, Result};
 
 pub struct ChunkType {
     bytes: [u8; 4],
@@ -38,12 +40,28 @@ impl TryFrom<[u8; 4]> for ChunkType {
     type Error = anyhow::Error;
 
     // Required method
-    fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
+    fn try_from(value: [u8; 4]) -> Result<Self> {
         let chunk = ChunkType { bytes: value };
         if chunk.is_valid() {
             Ok(chunk)
         } else {
             Err(anyhow!("Cant convert to chunk type, chunk is not valid"))
+        }
+    }
+}
+
+impl FromStr for ChunkType {
+    type Err = anyhow::Error;
+    fn from_str(s: &str) -> anyhow::Result<Self, Self::Err> {
+        let bytes: [u8; 4] = match s.bytes().collect::<Vec<u8>>().try_into() {
+            Ok(bytes) => bytes,
+            Err(_) => bail!("Cant convert to bytes array"),
+        };
+        let chunk = ChunkType { bytes };
+        if chunk.is_valid() {
+            Ok(chunk)
+        } else {
+            Err(anyhow!("Chunk is not valid"))
         }
     }
 }
