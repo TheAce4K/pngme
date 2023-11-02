@@ -1,4 +1,4 @@
-use crate::chunk_type::ChunkType;
+use crate::chunk_type::{self, ChunkType};
 use anyhow::{anyhow, bail, Result};
 use std::{
     fmt,
@@ -52,7 +52,14 @@ impl Chunk {
     }
 
     fn as_bytes(&self) -> Vec<u8> {
-        self.data.to_vec()
+        self.length
+            .to_be_bytes()
+            .iter()
+            .cloned()
+            .chain(self.chunk_type.bytes().iter().cloned())
+            .chain(self.data.iter().cloned())
+            .chain(self.crc.to_be_bytes().iter().cloned())
+            .collect()
     }
 }
 
