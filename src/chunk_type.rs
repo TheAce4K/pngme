@@ -13,13 +13,16 @@ impl ChunkType {
         self.bytes
     }
     fn is_valid(&self) -> bool {
+        if !self.is_reserved_bit_valid() || !self._is_ascii_ok() {
+            return false;
+        }
+        return true;
+    }
+    fn _is_ascii_ok(&self) -> bool {
         for byte in self.bytes.iter() {
             if !byte.is_ascii_alphabetic() {
                 return false;
             }
-        }
-        if !self.is_reserved_bit_valid() {
-            return false;
         }
         return true;
     }
@@ -58,25 +61,21 @@ impl FromStr for ChunkType {
             Ok(bytes) => bytes,
             Err(_) => bail!("Cant convert to bytes array"),
         };
+
         let chunk = ChunkType { bytes };
-        if chunk.is_valid() {
+        if chunk._is_ascii_ok() {
             Ok(chunk)
         } else {
-            Err(anyhow!("Chunk is not valid"))
+            bail!("Not a valid string")
         }
     }
 }
 
 impl Display for ChunkType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "[{}, {}, {}, {}]",
-            self.bytes[0] as char,
-            self.bytes[1] as char,
-            self.bytes[2] as char,
-            self.bytes[3] as char
-        )
+        let string =
+            String::from_utf8(self.bytes.to_vec()).expect("all bytes can be converted to utf8");
+        write!(f, "{}", string)
     }
 }
 
