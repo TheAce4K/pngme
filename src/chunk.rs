@@ -1,3 +1,98 @@
+use crate::chunk_type::ChunkType;
+use anyhow::{anyhow, bail, Result};
+use std::{
+    fmt,
+    io::{BufReader, Read},
+};
+
+use crc::{Crc, CRC_32_ISO_HDLC};
+
+pub struct Chunk {
+    chunk_type: ChunkType,
+    data: Vec<u8>,
+    length: u32,
+    crc: u32,
+}
+
+impl Chunk {
+    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Chunk {
+        let length: u32 = data.len() as u32;
+        let hasher = Crc::<u32>::new(&CRC_32_ISO_HDLC);
+        let crc_data = [&chunk_type.bytes(), data.as_slice()].concat();
+        let crc = hasher.checksum(crc_data.as_slice());
+        Chunk {
+            chunk_type,
+            data,
+            length,
+            crc,
+        }
+    }
+
+    fn length(&self) -> u32 {
+        self.length
+    }
+
+    fn chunk_type(&self) -> &ChunkType {
+        &self.chunk_type
+    }
+
+    fn data(&self) -> &[u8] {
+        &self.data
+    }
+
+    fn crc(&self) -> u32 {
+        self.crc
+    }
+
+    fn data_as_string(&self) -> Result<String> {
+        match String::from_utf8(self.data.to_owned()) {
+            Ok(string) => Ok(string),
+            Err(_) => Err(anyhow!("could not convert from string")),
+        }
+    }
+
+    fn as_bytes(&self) -> Vec<u8> {
+        self.data.to_vec()
+    }
+}
+
+impl TryFrom<&[u8]> for Chunk {
+    type Error = anyhow::Error;
+    fn try_from(value: &[u8]) -> Result<Self> {
+        let mut reader = BufReader::new(value);
+        let mut length: [u8; 4] = [0, 0, 0, 0];
+        reader.read_exact(&mut length)?;
+        let length = u32::from_be_bytes(length);
+        let mut chunk_data: [u8; 4] = [0, 0, 0, 0];
+        reader.read_exact(&mut chunk_data)?;
+        let chunk_type = ChunkType::try_from(chunk_data)?;
+        if !chunk_type.is_reserved_bit_valid() {
+            bail!("chunk type is not valid")
+        }
+        let mut data: Vec<u8> = vec![0; length as usize];
+        reader.read_exact(&mut data)?;
+        let mut crc: [u8; 4] = [0, 0, 0, 0];
+        reader.read_exact(&mut crc)?;
+        let crc = u32::from_be_bytes(crc);
+        Ok(Chunk {
+            length,
+            chunk_type,
+            data,
+            crc,
+        })
+    }
+}
+
+impl fmt::Display for Chunk {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Chunk: data: {:?}, chunk_type: {}, length: {}, crc: {}",
+            self.data, self.chunk_type, self.length, self.crc
+        )
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
