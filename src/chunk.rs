@@ -74,6 +74,11 @@ impl TryFrom<&[u8]> for Chunk {
         let mut crc: [u8; 4] = [0, 0, 0, 0];
         reader.read_exact(&mut crc)?;
         let crc = u32::from_be_bytes(crc);
+        let crc_data = [&chunk_type.bytes(), data.as_slice()].concat();
+        let valid_crc = Crc::<u32>::new(&CRC_32_ISO_HDLC).checksum(crc_data.as_slice());
+        if crc != valid_crc {
+            bail!("Crc is not valid")
+        }
         Ok(Chunk {
             length,
             chunk_type,
