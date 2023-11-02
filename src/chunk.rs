@@ -66,9 +66,6 @@ impl TryFrom<&[u8]> for Chunk {
         let mut chunk_data: [u8; 4] = [0, 0, 0, 0];
         reader.read_exact(&mut chunk_data)?;
         let chunk_type = ChunkType::try_from(chunk_data)?;
-        if !chunk_type.is_reserved_bit_valid() {
-            bail!("chunk type is not valid")
-        }
         let mut data: Vec<u8> = vec![0; length as usize];
         reader.read_exact(&mut data)?;
         let mut crc: [u8; 4] = [0, 0, 0, 0];
