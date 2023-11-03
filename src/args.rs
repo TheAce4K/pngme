@@ -3,13 +3,13 @@ use std::path::PathBuf;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
-struct Cli {
+pub struct Cli {
     #[command(subcommand)]
     command: Commands,
 }
 
 #[derive(Subcommand)]
-enum Commands {
+pub enum Commands {
     /// does testing things
     Encode(EncodeArgs),
     Decode(DecodeArgs),
@@ -18,7 +18,7 @@ enum Commands {
 }
 
 #[derive(Args)]
-struct EncodeArgs {
+pub struct EncodeArgs {
     file_path: PathBuf,
     chunk_type: String,
     message: String,
@@ -26,19 +26,19 @@ struct EncodeArgs {
 }
 
 #[derive(Args)]
-struct DecodeArgs {
+pub struct DecodeArgs {
     file_path: PathBuf,
     chunk_type: String,
 }
 
 #[derive(Args)]
-struct RemoveArgs {
+pub struct RemoveArgs {
     file_path: PathBuf,
     chunk_type: String,
 }
 
 #[derive(Args)]
-struct PrintArgs {
+pub struct PrintArgs {
     file_path: PathBuf,
 }
 
