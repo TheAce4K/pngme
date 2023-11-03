@@ -6,7 +6,7 @@ use std::{
 use crate::chunk::Chunk;
 use anyhow::{anyhow, bail, Ok, Result};
 
-struct Png {
+pub struct Png {
     chunks: Vec<Chunk>,
 }
 
