@@ -5,7 +5,7 @@ use std::path::PathBuf;
 #[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
-    command: Commands,
+    pub command: Commands,
 }
 
 #[derive(Subcommand)]
@@ -17,7 +17,7 @@ pub enum Commands {
     Print(PrintArgs),
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 pub struct EncodeArgs {
     file_path: PathBuf,
     chunk_type: String,
@@ -25,19 +25,19 @@ pub struct EncodeArgs {
     output_file: Option<PathBuf>,
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 pub struct DecodeArgs {
     file_path: PathBuf,
     chunk_type: String,
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 pub struct RemoveArgs {
     file_path: PathBuf,
     chunk_type: String,
 }
 
-#[derive(Args)]
+#[derive(Args, Debug)]
 pub struct PrintArgs {
     file_path: PathBuf,
 }
