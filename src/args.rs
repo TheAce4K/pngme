@@ -41,3 +41,9 @@ struct RemoveArgs {
 struct PrintArgs {
     file_path: PathBuf,
 }
+
+#[test]
+fn verify_cli() {
+    use clap::CommandFactory;
+    Cli::command().debug_assert();
+}
