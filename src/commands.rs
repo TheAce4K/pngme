@@ -1,9 +1,12 @@
 use anyhow::{anyhow, Result};
 use std::fs::File;
-use std::io::BufReader;
+use std::io::{BufReader, BufWriter, Write};
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use crate::args::{DecodeArgs, EncodeArgs, PrintArgs, RemoveArgs};
+use crate::chunk::Chunk;
+use crate::chunk_type::ChunkType;
 use crate::png::Png;
 
 fn read_file_from_file_path(file_path: PathBuf) -> Result<Png> {
@@ -13,7 +16,18 @@ fn read_file_from_file_path(file_path: PathBuf) -> Result<Png> {
     Ok(png)
 }
 
-pub fn encode(args: EncodeArgs);
+pub fn encode(args: EncodeArgs) -> Result<()> {
+    let mut png = read_file_from_file_path(args.file_path)?;
+    let chunk_type = ChunkType::from_str(&args.chunk_type)?;
+    let chunk = Chunk::new(chunk_type, args.message.as_bytes().to_vec());
+    png.append_chunk(chunk);
+    if let Some(output_file) = args.output_file {
+        let file = File::open(output_file)?;
+        let mut writer = BufWriter::new(file);
+        write!(writer, "{}", png)?;
+    }
+    Ok(())
+}
 pub fn decode(args: DecodeArgs) -> Result<()> {
     let png = read_file_from_file_path(args.file_path)?;
     let chunk = png

@@ -64,7 +64,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
 
 impl FromStr for ChunkType {
     type Err = anyhow::Error;
-    fn from_str(s: &str) -> anyhow::Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Self> {
         let bytes: [u8; 4] = match s.bytes().collect::<Vec<u8>>().try_into() {
             Ok(bytes) => bytes,
             Err(_) => bail!("Cant convert to bytes array"),
