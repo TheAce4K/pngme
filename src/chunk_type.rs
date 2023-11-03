@@ -28,10 +28,12 @@ impl ChunkType {
         return true;
     }
 
+    #[allow(dead_code)]
     pub fn is_critical(&self) -> bool {
         self.bytes[0].is_ascii_uppercase()
     }
 
+    #[allow(dead_code)]
     pub fn is_public(&self) -> bool {
         self.bytes[1].is_ascii_uppercase()
     }
@@ -40,6 +42,7 @@ impl ChunkType {
         self.bytes[2].is_ascii_uppercase()
     }
 
+    #[allow(dead_code)]
     pub fn is_safe_to_copy(&self) -> bool {
         self.bytes[3].is_ascii_lowercase()
     }

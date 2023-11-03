@@ -1,4 +1,4 @@
-use crate::chunk_type::{self, ChunkType};
+use crate::chunk_type::ChunkType;
 use anyhow::{anyhow, bail, Result};
 use std::{
     fmt,
@@ -56,9 +56,9 @@ impl Chunk {
             .to_be_bytes()
             .iter()
             .cloned()
-            .chain(self.chunk_type.bytes().iter().cloned())
-            .chain(self.data.iter().cloned())
-            .chain(self.crc.to_be_bytes().iter().cloned())
+            .chain(self.chunk_type().bytes().iter().cloned())
+            .chain(self.data().iter().cloned())
+            .chain(self.crc().to_be_bytes().iter().cloned())
             .collect()
     }
 }

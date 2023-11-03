@@ -24,7 +24,7 @@ pub fn encode(args: EncodeArgs) -> Result<()> {
     if let Some(output_file) = args.output_file {
         let file = File::open(output_file)?;
         let mut writer = BufWriter::new(file);
-        write!(writer, "{}", png)?;
+        writer.write_all(png.as_bytes().as_slice())?;
     }
     Ok(())
 }

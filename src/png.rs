@@ -1,10 +1,7 @@
-use std::{
-    fmt,
-    io::{BufReader, Read},
-};
+use std::fmt;
 
 use crate::chunk::Chunk;
-use anyhow::{anyhow, bail, Ok, Result};
+use anyhow::{bail, Ok, Result};
 
 pub struct Png {
     chunks: Vec<Chunk>,
@@ -82,7 +79,7 @@ impl TryFrom<&[u8]> for Png {
             remaining_bytes = &remaining_bytes[chunk.length() as usize + 12..];
             chunks.push(chunk);
         }
-        Ok(Png { chunks })
+        Ok(Png::from_chunks(chunks))
     }
 }
 
