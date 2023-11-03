@@ -54,7 +54,10 @@ impl TryFrom<[u8; 4]> for ChunkType {
         if chunk.is_valid() {
             Ok(chunk)
         } else {
-            Err(anyhow!("Cant convert to chunk type, chunk is not valid"))
+            Err(anyhow!(
+                "Cant convert to chunk type, chunk is not valid. Chunk: {}",
+                chunk
+            ))
         }
     }
 }
