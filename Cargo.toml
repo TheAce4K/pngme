@@ -5,7 +5,17 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "png_library"
+path = "src/lib.rs"
+
+[[bin]]
+name = "pngme"
+path = "src/main.rs"
+
 [dependencies]
 anyhow = "1.0.75"
 clap = { version = "4.4.7", features = ["derive"] }
 crc = "3.0.1"
+
+

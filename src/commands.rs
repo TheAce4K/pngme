@@ -5,9 +5,7 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 use crate::args::{DecodeArgs, EncodeArgs, PrintArgs, RemoveArgs};
-use crate::chunk::Chunk;
-use crate::chunk_type::ChunkType;
-use crate::png::Png;
+use png_library::{Chunk, ChunkType, Png};
 
 fn read_file_from_file_path(file_path: PathBuf) -> Result<Png> {
     let file = File::open(file_path)?;
