@@ -1,5 +1,5 @@
 extern crate png_library;
-mod args;
+pub mod args;
 mod commands;
 
 use anyhow::Result;

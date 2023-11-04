@@ -13,6 +13,10 @@ path = "src/lib.rs"
 name = "pngme"
 path = "src/main.rs"
 
+[[test]]
+name = "common_test"
+path = "tests/common_test.rs"
+
 [dependencies]
 anyhow = "1.0.75"
 clap = { version = "4.4.7", features = ["derive"] }
